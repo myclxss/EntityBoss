@@ -1,0 +1,9 @@
+name: EntityBoss
+version: '${project.version}'
+main: myclass.entityboss.Main
+api-version: 1.19
+authors: [ myclass ]
+
+commands:
+  boss:
+    description: spawn boss
