@@ -1,0 +1,72 @@
+############################################################
+# +------------------------------------------------------+ #
+# |                     Entity Boss                      | #
+# +------------------------------------------------------+ #
+############################################################
+
+# This is the first public version of the plugin, any bugs
+# or new suggestions can be made via my discord or a comment
+# on spigot.
+
+# Discord: myclass#9779
+# Spigot:
+# Portfolio: https://anhuar.space
+
+CONFIG:
+  DRAGON-NAME: "&6&l&oEL BOSS"
+  DRAGON-HEALT: 3000
+  DRAGON-DAMAGE: 48
+
+############################################################
+# +------------------------------------------------------+ #
+# |                    CHAT ACTIONS                      | #
+# +------------------------------------------------------+ #
+############################################################
+
+CHAT:
+
+  DRAGON:
+    DEATH-MESSAGE: "&8(&eEntityBoss&8) &c¡El dragón ha sido derrotado por  &e<killer_dragon>&c!"
+    PLAYER-DEATH: "&8(&eEntityBoss&8) &c<death-killer> &7ha sido asesinado por el End Dragon"
+
+  REWARD:
+    MESSAGE: "&8(&eEntityBoss&8) &a!Has ganado &e5 keys &cBOSS &apor matar al dragón!"
+
+############################################################
+# +------------------------------------------------------+ #
+# |                   TITLE ACTIONS                      | #
+# +------------------------------------------------------+ #
+############################################################
+
+TITLES:
+
+  SPAWN-DRAGON:
+    TITLE: "&cEL DRAGON"
+    SUBTITLE: "&eRENACIO DE LAS CENIZAS"
+
+  END-EVENT:
+    TITLE: "&cEL DRAGON"
+    SUBTITLE: "&eMURIO, FIN DEL EVENTO"
+
+############################################################
+# +------------------------------------------------------+ #
+# |                   REWARD ACTIONS                     | #
+# +------------------------------------------------------+ #
+############################################################
+
+REWARD:
+  ACTIVE: true
+  COMMAND: "crazycrates give physical Boss 5"
+
+
+############################################################
+# +------------------------------------------------------+ #
+# |                   EVENTS ACTIONS                     | #
+# +------------------------------------------------------+ #
+############################################################
+
+EVENTS:
+  DRAGON-DESTROY-BLOCKS: true
+  INTERACT-EGG: true
+  BREAK-EGG: true
+  PLACE-EGG: true
