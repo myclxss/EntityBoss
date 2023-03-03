@@ -68,7 +68,8 @@
         </repository>
         <!-- PlaceholderAPI Repository -->
         <repository>
-            <id>placeholderapi</id>        <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
     </repositories>
 

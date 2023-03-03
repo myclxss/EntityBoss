@@ -1,2 +1,27 @@
 ZOMBIE-BOSS:
-  NAME: "&6EL ZOMBIE UWU"
+  NAME: "&6papu"
+  HEALTH: 100.0
+  DAMAGE: 120
+
+CHAT:
+
+  ZOMBIE:
+    DEATH-MESSAGE: "&8(&eEntityBoss&8) &2¡El zombie ha sido derrotado por  &e<killer_zombie>&c!"
+    PLAYER-DEATH: "&8(&eEntityBoss&8) &4<death-killer> &eha sido asesinado por el Zombie"
+
+  REWARD:
+    MESSAGE: "&8(&eEntityBoss&8) &a!Has ganado &e5 keys &cBOSS &apor matar al zombie!"
+
+TITLES:
+
+  START-EVENT:
+    TITLE: "&cEL ZOMBIE"
+    SUBTITLE: "&eRENACIO DE LAS TIERRAS"
+
+  END-EVENT:
+    TITLE: "&cEL ZOMBIE"
+    SUBTITLE: "&eMURIO, FIN DEL EVENTO"
+
+REWARD:
+  ACTIVE: true
+  COMMAND: "crazycrates give physical Boss 5"

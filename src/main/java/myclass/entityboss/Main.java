@@ -62,7 +62,7 @@ public final class Main extends JavaPlugin {
 
     }
 
-    public void loadFiles(){
+    public void loadFiles() {
 
         FileAPI.base(this);
 

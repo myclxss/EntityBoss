@@ -170,6 +170,7 @@ public class DragonBoss implements Listener {
             player.sendMessage(Utils.color("La manzana de Notch está desactivada en este mundo."));
         }
     }
+
     @EventHandler
     public void onEntityChangeBlock(EntityChangeBlockEvent event) {
         if (event.getEntity() instanceof EnderDragon) {
