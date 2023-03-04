@@ -1,13 +1,7 @@
 package myclass.entityboss.command;
 
-import com.comphenix.protocol.wrappers.EnumWrappers;
-import me.clip.placeholderapi.libs.kyori.adventure.bossbar.BossBar;
-import me.clip.placeholderapi.libs.kyori.adventure.text.Component;
-import me.clip.placeholderapi.libs.kyori.adventure.text.format.NamedTextColor;
-import myclass.entityboss.Main;
-import myclass.entityboss.accesories.FileAPI;
+import myclass.entityboss.EntityBossAPI;
 import myclass.entityboss.accesories.TitleAPI;
-import myclass.entityboss.accesories.Utils;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,10 +11,12 @@ import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import us.narwell.narapi.bukkit.util.Colorize;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -29,12 +25,6 @@ import java.util.List;
 
 public class SpawnBoss implements CommandExecutor {
 
-    private final Main plugin;
-
-    public SpawnBoss(Main main) {
-        this.plugin = main;
-    }
-
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player))
             return true;
@@ -42,27 +32,27 @@ public class SpawnBoss implements CommandExecutor {
         Player player = (Player) sender;
 
         if (args.length < 2) {
-            player.sendMessage(Utils.color("&7&m-----------------------------------"));
-            player.sendMessage(Utils.color("&r"));
-            player.sendMessage(Utils.color("&8» &6Plugin: &fEntityBoss"));
-            player.sendMessage(Utils.color("&8» &6Developer: &fmyclass"));
-            player.sendMessage(Utils.color("&r"));
-            player.sendMessage(Utils.color("&7&m-----------------------------------"));
+            player.sendMessage(Colorize.set("&7&m-----------------------------------"));
+            player.sendMessage(Colorize.set("&r"));
+            player.sendMessage(Colorize.set("&8» &6Plugin: &fEntityBoss"));
+            player.sendMessage(Colorize.set("&8» &6Developer: &fmyclass"));
+            player.sendMessage(Colorize.set("&r"));
+            player.sendMessage(Colorize.set("&7&m-----------------------------------"));
             return true;
         }
 
         if (!args[0].equalsIgnoreCase("spawn")) {
-            player.sendMessage(Utils.color("&eUsage: &8/boss spawn dragon"));
+            player.sendMessage(Colorize.set("&eUsage: &8/boss spawn <boss type>"));
             return true;
         }
         if (args[1].equalsIgnoreCase("dragon")) {
             if (player.hasPermission("entityboss.spawn.dragon")) {
                 EnderDragon enderDragon = player.getWorld().spawn(player.getLocation().add(0.5, 0, 0.5), EnderDragon.class);
-                enderDragon.setCustomName(Utils.color(FileAPI.config.getString("CONFIG.DRAGON-NAME")));
+                enderDragon.setCustomName(Colorize.set(EntityBossAPI.getInstance().getConf().getString("CONFIG.DRAGON-NAME")));
                 enderDragon.setCustomNameVisible(true);
                 enderDragon.setHealth(200);
                 enderDragon.setMaxHealth(200);
-                enderDragon.setMetadata("DragonBoss", new FixedMetadataValue(plugin, "DragonBoss"));
+                enderDragon.setMetadata("DragonBoss", new FixedMetadataValue(EntityBossAPI.getInstance().getMain(), "DragonBoss"));
 
                 // Agregar armadura
                 PotionEffect armorEffect = new PotionEffect(PotionEffectType.ABSORPTION, Integer.MAX_VALUE, 4, true, false);
@@ -78,12 +68,12 @@ public class SpawnBoss implements CommandExecutor {
                         }
                         enderDragon.setHealth(Math.min(enderDragon.getHealth() + 45, enderDragon.getMaxHealth()));
                     }
-                }.runTaskTimer(plugin, 0, 500); // 25 segundos = 500 ticks
+                }.runTaskTimer(EntityBossAPI.getInstance().getMain(), 0, 500); // 25 segundos = 500 ticks
 
                 List<Player> players1 = new ArrayList<>(Bukkit.getOnlinePlayers());
                 for (int i = 0; i < players1.size(); i++) {
                     Player player2 = players1.get(i);
-                    TitleAPI.sendTitle(player2, 10, 30, 10, FileAPI.config.getString("TITLES.SPAWN-DRAGON.TITLE"), FileAPI.config.getString("TITLES.SPAWN-DRAGON.SUBTITLE"));
+                    TitleAPI.sendTitle(player2, 10, 30, 10, EntityBossAPI.getInstance().getConf().getString("TITLES.SPAWN-DRAGON.TITLE"), EntityBossAPI.getInstance().getConf().getString("TITLES.SPAWN-DRAGON.SUBTITLE"));
                 }
                 return true;
             }
@@ -94,10 +84,10 @@ public class SpawnBoss implements CommandExecutor {
 
                 zombie.setBaby(false);
                 zombie.setVillager(false);
-                String name = Utils.color(FileAPI.zombie.getString("ZOMBIE-BOSS.NAME")) + ChatColor.GREEN + "(" + formatHealth(zombie.getHealth()) + "/" + formatHealth(zombie.getMaxHealth()) + ")";
+                String name = Colorize.set(EntityBossAPI.getInstance().getZombie().getString("ZOMBIE-BOSS.NAME")) + ChatColor.GREEN + "(" + formatHealth(zombie.getHealth()) + "/" + formatHealth(zombie.getMaxHealth()) + ")";
                 zombie.setCustomName(name);
                 zombie.setCustomNameVisible(true);
-                zombie.setMetadata("ZombieBoss", new FixedMetadataValue(plugin, "ZombieBoss"));
+                zombie.setMetadata("ZombieBoss", new FixedMetadataValue(EntityBossAPI.getInstance().getMain(), "ZombieBoss"));
                 zombie.setMaxHealth(10.0);
                 zombie.setHealth(10.0);
 
@@ -111,23 +101,13 @@ public class SpawnBoss implements CommandExecutor {
                     player.getWorld().strikeLightning(zombie.getLocation());
                 }
 
-                ItemStack helmet = new ItemStack(Material.DIAMOND_HELMET);
-                ItemStack chestplate = new ItemStack(Material.DIAMOND_CHESTPLATE);
-                ItemStack leggings = new ItemStack(Material.DIAMOND_LEGGINGS);
-                ItemStack boots = new ItemStack(Material.DIAMOND_BOOTS);
-                ItemStack sword = new ItemStack(Material.DIAMOND_SWORD);
+                ItemStack item = new ItemStack(Material.DIAMOND_HELMET, 1);
+                ItemMeta meta = item.getItemMeta();
+                meta.setDisplayName(Colorize.set("&6owo"));
+                meta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 15, false);
+                item.setItemMeta(meta);
 
-                helmet.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
-                chestplate.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
-                leggings.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
-                boots.addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
-                sword.addEnchantment(Enchantment.DAMAGE_ALL, 5);
-
-                zombie.getEquipment().setHelmet(helmet);
-                zombie.getEquipment().setChestplate(chestplate);
-                zombie.getEquipment().setLeggings(leggings);
-                zombie.getEquipment().setBoots(boots);
-                zombie.getEquipment().setItemInHand(sword);
+                zombie.getEquipment().setHelmet(item);
 
                 new BukkitRunnable() {
                     double t = 0;
@@ -150,13 +130,13 @@ public class SpawnBoss implements CommandExecutor {
                             cancel();
                         }
                     }
-                }.runTaskTimer(plugin, 0, 1);
+                }.runTaskTimer(EntityBossAPI.getInstance().getMain(), 0, 1);
             }
         }
         List<Player> players1 = new ArrayList<>(Bukkit.getOnlinePlayers());
         for (int i = 0; i < players1.size(); i++) {
             Player player2 = players1.get(i);
-            TitleAPI.sendTitle(player2, 10, 30, 10, FileAPI.zombie.getString("TITLES.START-EVENT.TITLE"), FileAPI.zombie.getString("TITLES.START-EVENT.SUBTITLE"));
+            TitleAPI.sendTitle(player2, 10, 30, 10, EntityBossAPI.getInstance().getZombie().getString("TITLES.START-EVENT.TITLE"), EntityBossAPI.getInstance().getZombie().getString("TITLES.START-EVENT.SUBTITLE"));
         }
         return false;
     }

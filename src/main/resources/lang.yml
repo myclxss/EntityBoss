@@ -1,0 +1,12 @@
+MENU:
+  SPAWN-BOSS:
+    NAME: "&6&lGENERATED BOSS"
+    ROWS:
+    ITEMS:
+      ZOMBIE-BOSS:
+        NAME: "&2&LZOMBIE BOSS SPAWN"
+        SLOT: 2
+        LORE:
+          - "&aLore 1"
+          - "&6Lore 2"
+          - "&4Lore 3"

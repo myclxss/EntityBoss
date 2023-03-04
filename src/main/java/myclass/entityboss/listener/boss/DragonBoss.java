@@ -6,10 +6,8 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import me.clip.placeholderapi.PlaceholderAPI;
-import myclass.entityboss.Main;
-import myclass.entityboss.accesories.FileAPI;
+import myclass.entityboss.EntityBossAPI;
 import myclass.entityboss.accesories.TitleAPI;
-import myclass.entityboss.accesories.Utils;
 import org.bukkit.*;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
@@ -23,18 +21,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import us.narwell.narapi.bukkit.util.Colorize;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DragonBoss implements Listener {
-    private Main plugin;
-
-    public DragonBoss(Main main) {
-        this.plugin = main;
-    }
 
     private ProtocolManager pm;
 
@@ -57,25 +50,25 @@ public class DragonBoss implements Listener {
             Player killer = event.getEntity().getKiller();
             if (killer != null) {
 
-                String sendMessage = FileAPI.config.getString("CHAT.DRAGON.DEATH-MESSAGE");
-                String replacedMessage1 = PlaceholderAPI.setPlaceholders(event.getEntity().getKiller(), Utils.color(sendMessage));
+                String sendMessage = EntityBossAPI.getInstance().getConf().getString("CHAT.DRAGON.DEATH-MESSAGE");
+                String replacedMessage1 = PlaceholderAPI.setPlaceholders(event.getEntity().getKiller(), Colorize.set(sendMessage));
                 replacedMessage1 = replacedMessage1.replaceAll("<killer_dragon>", killer.getName());
 
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     player.sendMessage(replacedMessage1);
                 }
 
-                if (FileAPI.config.getString("REWARD.ACTIVE").equals("true")) {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), FileAPI.config.getString("REWARD.COMMAND") + " " + killer.getName());
+                if (EntityBossAPI.getInstance().getConf().getString("REWARD.ACTIVE").equals("true")) {
+                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), EntityBossAPI.getInstance().getConf().getString("REWARD.COMMAND") + " " + killer.getName());
 
-                    killer.sendMessage(Utils.color(FileAPI.config.getString("CHAT.REWARD.MESSAGE")));
+                    killer.sendMessage(Colorize.set(EntityBossAPI.getInstance().getConf().getString("CHAT.REWARD.MESSAGE")));
                 } else {
 
 
                     List<Player> players1 = new ArrayList<>(Bukkit.getOnlinePlayers());
                     for (int i = 0; i < players1.size(); i++) {
                         Player player2 = players1.get(i);
-                        TitleAPI.sendTitle(player2, 10, 30, 10, FileAPI.config.getString("TITLES.END-EVENT.TITLE"), FileAPI.config.getString("TITLES.END-EVENT.SUBTITLE"));
+                        TitleAPI.sendTitle(player2, 10, 30, 10, EntityBossAPI.getInstance().getConf().getString("TITLES.END-EVENT.TITLE"), EntityBossAPI.getInstance().getConf().getString("TITLES.END-EVENT.SUBTITLE"));
                     }
                 }
 
@@ -101,10 +94,10 @@ public class DragonBoss implements Listener {
                         });
                         time += 0.15;
                     }
-                }.runTaskTimer(Main.getInstance(), 0, 1).getTaskId();
+                }.runTaskTimer(EntityBossAPI.getInstance().getMain(), 0, 1).getTaskId();
 
                 // Cancela la tarea después de 10 segundos
-                Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> Bukkit.getScheduler().cancelTask(taskId), 200L);
+                Bukkit.getScheduler().runTaskLater(EntityBossAPI.getInstance().getMain(), () -> Bukkit.getScheduler().cancelTask(taskId), 200L);
             }
         } else if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
@@ -114,8 +107,8 @@ public class DragonBoss implements Listener {
                 Entity damager = ((EntityDamageByEntityEvent) damageEvent).getDamager();
                 if (damager instanceof EnderDragon) {
 
-                    String sendMessage2 = FileAPI.config.getString("CHAT.DRAGON.PLAYER-DEATH");
-                    String replacedMessage2 = PlaceholderAPI.setPlaceholders(event.getEntity().getKiller(), Utils.color(sendMessage2));
+                    String sendMessage2 = EntityBossAPI.getInstance().getConf().getString("CHAT.DRAGON.PLAYER-DEATH");
+                    String replacedMessage2 = PlaceholderAPI.setPlaceholders(event.getEntity().getKiller(), Colorize.set(sendMessage2));
                     replacedMessage2 = replacedMessage2.replaceAll("<death-killer>", player.getName());
 
                     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
@@ -128,7 +121,7 @@ public class DragonBoss implements Listener {
 
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
-        if (Main.instance.getConfig().getString("EVENTS.DRAGON-DESTROY-BLOCKS").equals("true")) {
+        if (EntityBossAPI.getInstance().getConf().getString("EVENTS.DRAGON-DESTROY-BLOCKS").equals("true")) {
             if (event.getEntity() instanceof EnderDragon) {
                 event.blockList().clear();
             }
@@ -137,7 +130,7 @@ public class DragonBoss implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        if (Main.instance.getConfig().getString("EVENTS.BREAK-EGG").equals("true")) {
+        if (EntityBossAPI.getInstance().getConf().getString("EVENTS.BREAK-EGG").equals("true")) {
 
             if (event.getBlock().getType() == Material.DRAGON_EGG) {
                 event.setCancelled(true);
@@ -147,7 +140,7 @@ public class DragonBoss implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
-        if (Main.instance.getConfig().getString("EVENTS.PLACE-EGG").equals("true")) {
+        if (EntityBossAPI.getInstance().getConf().getString("EVENTS.PLACE-EGG").equals("true")) {
             if (event.getBlock().getType() == Material.DRAGON_EGG) {
                 event.setCancelled(true);
             }
@@ -159,7 +152,7 @@ public class DragonBoss implements Listener {
 
         Player player = event.getPlayer();
 
-        if (FileAPI.config.getString("EVENTS.INTERACT-EGG").equals("true")) {
+        if (EntityBossAPI.getInstance().getConf().getString("EVENTS.INTERACT-EGG").equals("true")) {
             if (event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.DRAGON_EGG) {
                 event.setCancelled(true);
             }
@@ -167,7 +160,7 @@ public class DragonBoss implements Listener {
         World world = player.getWorld();
         if (world.getName().equals("BossEnd") && event.hasItem() && event.getItem().getType() == Material.GOLDEN_APPLE && event.getItem().getDurability() == (short) 1) {
             event.setCancelled(true);
-            player.sendMessage(Utils.color("La manzana de Notch está desactivada en este mundo."));
+            player.sendMessage(Colorize.set("La manzana de Notch está desactivada en este mundo."));
         }
     }
 

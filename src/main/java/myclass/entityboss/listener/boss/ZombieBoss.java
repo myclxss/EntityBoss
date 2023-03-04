@@ -6,13 +6,9 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import me.clip.placeholderapi.PlaceholderAPI;
-import myclass.entityboss.Main;
-import myclass.entityboss.accesories.FileAPI;
+import myclass.entityboss.EntityBossAPI;
 import myclass.entityboss.accesories.TitleAPI;
-import myclass.entityboss.accesories.Utils;
-import net.minecraft.server.v1_8_R3.GenericAttributes;
 import org.bukkit.*;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftZombie;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,6 +19,7 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import us.narwell.narapi.bukkit.util.Colorize;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
@@ -38,7 +35,7 @@ public class ZombieBoss implements Listener {
         if (event.getEntityType() == EntityType.ZOMBIE) {
             Zombie zombie = (Zombie) event.getEntity();
             if (zombie.hasMetadata("ZombieBoss")) {
-                String name = Utils.color(FileAPI.zombie.getString("ZOMBIE-BOSS.NAME")) + ChatColor.GREEN + "(" + formatHealth(zombie.getHealth()) + "/" + formatHealth(zombie.getMaxHealth()) + ")";
+                String name = Colorize.set(EntityBossAPI.getInstance().getZombie().getString("ZOMBIE-BOSS.NAME")) + ChatColor.GREEN + "(" + formatHealth(zombie.getHealth()) + "/" + formatHealth(zombie.getMaxHealth()) + ")";
                 zombie.setCustomName(name);
                 zombie.setCustomNameVisible(true);
                 zombie.setMaxHealth(90.0);
@@ -53,7 +50,7 @@ public class ZombieBoss implements Listener {
         if (event.getEntityType() == EntityType.ZOMBIE) {
             Zombie zombie = (Zombie) event.getEntity();
             if (zombie.hasMetadata("ZombieBoss")) {
-                String newName = Utils.color(FileAPI.zombie.getString("ZOMBIE-BOSS.NAME")) + ChatColor.GREEN + "(" + formatHealth(zombie.getHealth()) + "/" + formatHealth(zombie.getMaxHealth()) + ")";
+                String newName = Colorize.set(EntityBossAPI.getInstance().getZombie().getString("ZOMBIE-BOSS.NAME")) + ChatColor.GREEN + "(" + formatHealth(zombie.getHealth()) + "/" + formatHealth(zombie.getMaxHealth()) + ")";
                 zombie.setCustomName(newName);
 
                 if (event.getCause() == EntityDamageEvent.DamageCause.FIRE || event.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK) {
@@ -89,14 +86,14 @@ public class ZombieBoss implements Listener {
                 Player killer = event.getEntity().getKiller();
                 if (killer != null) {
 
-                    String sendMessage = FileAPI.zombie.getString("CHAT.ZOMBIE.DEATH-MESSAGE");
-                    String replacedMessage1 = PlaceholderAPI.setPlaceholders(event.getEntity().getKiller(), Utils.color(sendMessage));
+                    String sendMessage = EntityBossAPI.getInstance().getZombie().getString("CHAT.ZOMBIE.DEATH-MESSAGE");
+                    String replacedMessage1 = PlaceholderAPI.setPlaceholders(event.getEntity().getKiller(), Colorize.set(sendMessage));
                     replacedMessage1 = replacedMessage1.replaceAll("<killer_zombie>", killer.getName());
 
                     List<Player> players1 = new ArrayList<>(Bukkit.getOnlinePlayers());
                     for (int i = 0; i < players1.size(); i++) {
                         Player player2 = players1.get(i);
-                        TitleAPI.sendTitle(player2, 10, 30, 10, FileAPI.zombie.getString("TITLES.END-EVENT.TITLE"), FileAPI.zombie.getString("TITLES.END-EVENT.SUBTITLE"));
+                        TitleAPI.sendTitle(player2, 10, 30, 10, EntityBossAPI.getInstance().getZombie().getString("TITLES.END-EVENT.TITLE"), EntityBossAPI.getInstance().getZombie().getString("TITLES.END-EVENT.SUBTITLE"));
                     }
 
                     for (Player player : Bukkit.getOnlinePlayers()) {
@@ -124,15 +121,15 @@ public class ZombieBoss implements Listener {
                             });
                             time += 0.15;
                         }
-                    }.runTaskTimer(Main.getInstance(), 0, 1).getTaskId();
+                    }.runTaskTimer(EntityBossAPI.getInstance().getMain(), 0, 1).getTaskId();
 
                     // Cancela la tarea después de 10 segundos
-                    Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> Bukkit.getScheduler().cancelTask(taskId), 200L);
+                    Bukkit.getScheduler().runTaskLater(EntityBossAPI.getInstance().getMain(), () -> Bukkit.getScheduler().cancelTask(taskId), 200L);
                 }
-                if (FileAPI.config.getString("REWARD.ACTIVE").equals("true")) {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), FileAPI.zombie.getString("REWARD.COMMAND") + " " + killer.getName());
+                if (EntityBossAPI.getInstance().getConf().getString("REWARD.ACTIVE").equals("true")) {
+                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), EntityBossAPI.getInstance().getZombie().getString("REWARD.COMMAND") + " " + killer.getName());
 
-                    killer.sendMessage(Utils.color(FileAPI.zombie.getString("CHAT.REWARD.MESSAGE")));
+                    killer.sendMessage(EntityBossAPI.getInstance().getZombie().getString("CHAT.REWARD.MESSAGE", true));
                 }
             }
         } else if (event.getEntity() instanceof Player) {
@@ -143,8 +140,8 @@ public class ZombieBoss implements Listener {
                 Entity damager = ((EntityDamageByEntityEvent) damageEvent).getDamager();
                 if (damager instanceof Zombie) {
 
-                    String sendMessage2 = FileAPI.zombie.getString("CHAT.ZOMBIE.PLAYER-DEATH");
-                    String replacedMessage2 = PlaceholderAPI.setPlaceholders(event.getEntity().getKiller(), Utils.color(sendMessage2));
+                    String sendMessage2 = EntityBossAPI.getInstance().getZombie().getString("CHAT.ZOMBIE.PLAYER-DEATH");
+                    String replacedMessage2 = PlaceholderAPI.setPlaceholders(event.getEntity().getKiller(), Colorize.set(sendMessage2));
                     replacedMessage2 = replacedMessage2.replaceAll("<death-killer>", player.getName());
 
                     for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
